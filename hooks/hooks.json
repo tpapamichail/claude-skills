@@ -1,0 +1,31 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear|compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/tdd-reminder.md\"",
+            "commandWindows": "Get-Content -Raw \"$env:CLAUDE_PLUGIN_ROOT\\hooks\\tdd-reminder.md\"",
+            "timeout": 5,
+            "statusMessage": "Loading TDD rules..."
+          }
+        ]
+      }
+    ],
+    "SubagentStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/tdd-reminder.md\"",
+            "commandWindows": "Get-Content -Raw \"$env:CLAUDE_PLUGIN_ROOT\\hooks\\tdd-reminder.md\"",
+            "timeout": 5,
+            "statusMessage": "Loading TDD rules..."
+          }
+        ]
+      }
+    ]
+  }
+}

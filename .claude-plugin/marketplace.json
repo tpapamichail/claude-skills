@@ -1,0 +1,18 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "claude-skills",
+  "description": "Thomas Papamichail's personal Agent Skills — a test-first GitHub workflow, installable as a Claude Code plugin or with the skills CLI.",
+  "owner": {
+    "name": "Thomas Papamichail",
+    "url": "https://github.com/tpapamichail"
+  },
+  "plugins": [
+    {
+      "name": "claude-skills",
+      "description": "Test-first GitHub workflow — red-green-refactor on every line of production code, one feature branch per task, and issues and Projects boards driven from the terminal. Detects each repo's own conventions instead of hardcoding them, and never claims green without pasted output.",
+      "source": "./",
+      "version": "1.0.0",
+      "category": "workflow"
+    }
+  ]
+}
