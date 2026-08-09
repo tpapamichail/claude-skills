@@ -116,6 +116,32 @@ deliberate.
 - `gh` ≥ 2.97 for `gh-project` — it relies on `item-edit --field/--value` and
   `item-list --query`, which avoid raw GraphQL node IDs
 
+## Companion tools
+
+Not shipped here, but part of how I actually work — install them separately.
+
+| Tool | What it is | Why |
+|---|---|---|
+| [codebase-memory-mcp](https://github.com/DeusData/codebase-memory-mcp) | MCP server | code search over a knowledge graph instead of grep |
+| [nestjs-best-practices](https://www.skills.sh/kadajett/agent-nestjs-skills/nestjs-best-practices) | Agent Skill | NestJS conventions on the projects that use it |
+
+**codebase-memory-mcp** indexes the repo into a graph, so "who calls this", "what
+breaks if I change it", and "where is X wired" are structural queries
+(`search_graph`, `trace_path`, `get_code_snippet`) rather than a text sweep. It pairs
+directly with `gh-issue`, whose triage step is mostly exploration: the sub-agents map
+the affected areas from the graph instead of grepping their way there.
+
+Install per its own README, register it with `claude mcp add`, then index a repo once
+with `index_repository` before the first query.
+
+**nestjs-best-practices** is the stack-specific layer these skills deliberately don't
+have — `tdd` and `gh-flow` say *how* to work, it says what good looks like in a NestJS
+codebase.
+
+```bash
+npx skills add kadajett/agent-nestjs-skills -s nestjs-best-practices
+```
+
 ## Conventions
 
 Skills here follow three rules, which is most of why they're reusable:
