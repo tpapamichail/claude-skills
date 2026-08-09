@@ -131,15 +131,21 @@ breaks if I change it", and "where is X wired" are structural queries
 directly with `gh-issue`, whose triage step is mostly exploration: the sub-agents map
 the affected areas from the graph instead of grepping their way there.
 
-Install per its own README, register it with `claude mcp add`, then index a repo once
+```bash
+curl -fsSL https://raw.githubusercontent.com/DeusData/codebase-memory-mcp/main/install.sh | bash
+```
+
+The installer detects the coding agent and registers the server itself — no
+`claude mcp add`, no external database. Restart the agent, then index a repo once
 with `index_repository` before the first query.
 
 **nestjs-best-practices** is the stack-specific layer these skills deliberately don't
-have — `tdd` and `gh-flow` say *how* to work, it says what good looks like in a NestJS
-codebase.
+have — `tdd` and `gh-flow` say *how* to work; its 40 practices, ordered by priority
+across architecture, DI, security and performance, say what good looks like in a
+NestJS codebase.
 
 ```bash
-npx skills add kadajett/agent-nestjs-skills -s nestjs-best-practices
+npx skills add https://github.com/kadajett/agent-nestjs-skills --skill nestjs-best-practices
 ```
 
 ## Conventions
