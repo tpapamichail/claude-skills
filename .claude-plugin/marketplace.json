@@ -11,7 +11,7 @@
       "name": "claude-skills",
       "description": "Test-first GitHub workflow — red-green-refactor on every line of production code, one feature branch per task, and issues and Projects boards driven from the terminal. Detects each repo's own conventions instead of hardcoding them, and never claims green without pasted output.",
       "source": "./",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "category": "workflow"
     }
   ]
