@@ -1,10 +1,10 @@
 #!/bin/sh
-# Emits tdd-reminder.md as a hook payload for the event named in $1.
+# Emits session-rules.md as a hook payload for the event named in $1.
 # SessionStart would accept plain stdout, but SubagentStart only injects text
 # it receives as JSON hookSpecificOutput.additionalContext — so both go here.
 set -eu
 event="$1"
-file="$(dirname "$0")/tdd-reminder.md"
+file="$(dirname "$0")/session-rules.md"
 
 if command -v jq >/dev/null 2>&1; then
   jq -Rs --arg e "$event" \

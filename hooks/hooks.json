@@ -7,9 +7,9 @@
           {
             "type": "command",
             "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/emit-reminder.sh\" SessionStart",
-            "commandWindows": "@{hookSpecificOutput=@{hookEventName='SessionStart';additionalContext=(Get-Content -Raw \"$env:CLAUDE_PLUGIN_ROOT\\hooks\\tdd-reminder.md\")}} | ConvertTo-Json -Depth 5 -Compress",
+            "commandWindows": "@{hookSpecificOutput=@{hookEventName='SessionStart';additionalContext=(Get-Content -Raw \"$env:CLAUDE_PLUGIN_ROOT\\hooks\\session-rules.md\")}} | ConvertTo-Json -Depth 5 -Compress",
             "timeout": 5,
-            "statusMessage": "Loading TDD rules..."
+            "statusMessage": "Loading TDD and git flow rules..."
           }
         ]
       }
@@ -20,9 +20,9 @@
           {
             "type": "command",
             "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/emit-reminder.sh\" SubagentStart",
-            "commandWindows": "@{hookSpecificOutput=@{hookEventName='SubagentStart';additionalContext=(Get-Content -Raw \"$env:CLAUDE_PLUGIN_ROOT\\hooks\\tdd-reminder.md\")}} | ConvertTo-Json -Depth 5 -Compress",
+            "commandWindows": "@{hookSpecificOutput=@{hookEventName='SubagentStart';additionalContext=(Get-Content -Raw \"$env:CLAUDE_PLUGIN_ROOT\\hooks\\session-rules.md\")}} | ConvertTo-Json -Depth 5 -Compress",
             "timeout": 5,
-            "statusMessage": "Loading TDD rules..."
+            "statusMessage": "Loading TDD and git flow rules..."
           }
         ]
       }
