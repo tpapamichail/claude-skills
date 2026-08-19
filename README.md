@@ -19,7 +19,7 @@ that installed it. Pass `--copy` if you want independent copies instead.
 
 ```
 /plugin marketplace add tpapamichail/claude-skills
-/plugin install claude-skills@claude-skills
+/plugin install claude-skills@tpapamichail
 ```
 
 Same skills, same directory — the repo is both a skills package and a

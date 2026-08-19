@@ -1,6 +1,6 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
-  "name": "claude-skills",
+  "name": "tpapamichail",
   "description": "Thomas Papamichail's personal Agent Skills — a test-first GitHub workflow, installable as a Claude Code plugin or with the skills CLI.",
   "owner": {
     "name": "Thomas Papamichail",
