@@ -7,7 +7,6 @@
     "name": "Thomas Papamichail",
     "url": "https://github.com/tpapamichail"
   },
-  "hooks": "./hooks/hooks.json",
   "homepage": "https://github.com/tpapamichail/claude-skills",
   "repository": "https://github.com/tpapamichail/claude-skills",
   "license": "MIT",

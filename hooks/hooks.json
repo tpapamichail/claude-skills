@@ -6,8 +6,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/tdd-reminder.md\"",
-            "commandWindows": "Get-Content -Raw \"$env:CLAUDE_PLUGIN_ROOT\\hooks\\tdd-reminder.md\"",
+            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/emit-reminder.sh\" SessionStart",
+            "commandWindows": "@{hookSpecificOutput=@{hookEventName='SessionStart';additionalContext=(Get-Content -Raw \"$env:CLAUDE_PLUGIN_ROOT\\hooks\\tdd-reminder.md\")}} | ConvertTo-Json -Depth 5 -Compress",
             "timeout": 5,
             "statusMessage": "Loading TDD rules..."
           }
@@ -19,8 +19,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/tdd-reminder.md\"",
-            "commandWindows": "Get-Content -Raw \"$env:CLAUDE_PLUGIN_ROOT\\hooks\\tdd-reminder.md\"",
+            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/emit-reminder.sh\" SubagentStart",
+            "commandWindows": "@{hookSpecificOutput=@{hookEventName='SubagentStart';additionalContext=(Get-Content -Raw \"$env:CLAUDE_PLUGIN_ROOT\\hooks\\tdd-reminder.md\")}} | ConvertTo-Json -Depth 5 -Compress",
             "timeout": 5,
             "statusMessage": "Loading TDD rules..."
           }
