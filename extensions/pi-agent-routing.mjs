@@ -1,4 +1,5 @@
 import { spawn } from "node:child_process";
+import { StringDecoder } from "node:string_decoder";
 import { existsSync, readFileSync } from "node:fs";
 import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -6,7 +7,13 @@ import { basename, join } from "node:path";
 import { Type } from "typebox";
 
 import { loadPiModels } from "../src/pi-config.mjs";
-import { buildPiArgs, preparePiTask } from "../src/pi-routing.mjs";
+import {
+  OUTPUT_ACCUMULATION_CAP_BYTES,
+  buildPiArgs,
+  createPiOutputParser,
+  preparePiTask,
+  resolveWorkspaceCwd,
+} from "../src/pi-routing.mjs";
 import { validateCatalog } from "../src/routing.mjs";
 
 const catalog = JSON.parse(readFileSync(new URL("../routing/agents.json", import.meta.url), "utf8"));
@@ -35,14 +42,6 @@ function invocation(args) {
   return { command: "pi", args };
 }
 
-function textFromMessage(message) {
-  if (message?.role !== "assistant" || !Array.isArray(message.content)) return "";
-  return message.content
-    .filter((part) => part?.type === "text" && typeof part.text === "string")
-    .map((part) => part.text)
-    .join("\n");
-}
-
 function truncateOutput(output) {
   if (Buffer.byteLength(output, "utf8") <= MAX_OUTPUT_BYTES) return output;
   let end = Math.min(output.length, MAX_OUTPUT_BYTES);
@@ -55,6 +54,7 @@ async function runPreparedTask(prepared, cwd, signal) {
   const promptPath = join(directory, `${prepared.agent.id}.md`);
   await writeFile(promptPath, prepared.systemPrompt, { encoding: "utf8", mode: 0o600 });
 
+  const parser = createPiOutputParser();
   try {
     const target = invocation(buildPiArgs(prepared, promptPath));
     const result = await new Promise((resolve, reject) => {
@@ -63,43 +63,28 @@ async function runPreparedTask(prepared, cwd, signal) {
         shell: false,
         stdio: ["ignore", "pipe", "pipe"],
       });
-      let stdout = "";
+      const decoder = new StringDecoder("utf8");
       let stderr = "";
-      let buffer = "";
-      let finalOutput = "";
       let aborted = false;
 
-      const processLine = (line) => {
-        if (!line.trim()) return;
-        try {
-          const event = JSON.parse(line);
-          if (event.type === "message_end") {
-            finalOutput = textFromMessage(event.message) || finalOutput;
-          }
-        } catch {
-          stdout += `${line}\n`;
-        }
-      };
-
-      child.stdout.on("data", (chunk) => {
-        buffer += chunk.toString();
-        const lines = buffer.split("\n");
-        buffer = lines.pop() ?? "";
-        for (const line of lines) processLine(line);
-      });
+      child.stdout.on("data", (chunk) => parser.push(decoder.write(chunk)));
       child.stderr.on("data", (chunk) => {
+        if (Buffer.byteLength(stderr, "utf8") >= OUTPUT_ACCUMULATION_CAP_BYTES) return;
         stderr += chunk.toString();
       });
       child.on("error", reject);
       child.on("close", (code) => {
-        if (buffer) processLine(buffer);
+        const tail = decoder.end();
+        if (tail) parser.push(tail);
+        parser.flush();
         if (aborted) return reject(new Error(`Agent ${prepared.agent.id} was aborted.`));
         if (code !== 0) {
           return reject(
-            new Error(`Agent ${prepared.agent.id} exited with ${code}: ${stderr.trim() || stdout.trim()}`),
+            new Error(`Agent ${prepared.agent.id} exited with ${code}: ${truncateOutput(stderr.trim()) || parser.plainOutput.trim()}`),
           );
         }
-        resolve(finalOutput || stdout.trim() || "(no output)");
+        const output = parser.finalOutput || parser.plainOutput.trim() || "(no output)";
+        resolve(parser.truncated ? `${output}\n(output truncated)` : output);
       });
 
       const abort = () => {
@@ -182,7 +167,7 @@ export default function agentRoutingExtension(pi) {
 
         const prepared = await Promise.all(
           requests.map(async (request) => {
-            const cwd = request.cwd ?? ctx.cwd;
+            const cwd = await resolveWorkspaceCwd(request.cwd, ctx.cwd ?? process.cwd());
             const models = await loadPiModels({ cwd });
             return { cwd, task: preparePiTask(request, { catalog, tiers, models }) };
           }),

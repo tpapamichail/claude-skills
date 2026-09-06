@@ -78,14 +78,17 @@ primary agent's model. Re-run the command after changing the canonical catalog.
 Pi has no built-in subagent runtime, so this repository is also a Pi package:
 
 ```bash
-pi install git:github.com/tpapamichail/thomas-skills@v1.1.3
+pi install git:github.com/tpapamichail/thomas-skills@v1
 ```
+
+After tagging a release, refresh the moving major tag with
+`git tag -f v1 && git push -f origin v1` so the snippet never goes stale.
 
 The command above installs globally. To load the package only for one project,
 run the project-local install from that project's root:
 
 ```bash
-pi install -l git:github.com/tpapamichail/thomas-skills@v1.1.3
+pi install -l git:github.com/tpapamichail/thomas-skills@v1
 ```
 
 This records the package in `.pi/settings.json`; Pi loads it only for that trusted
@@ -279,12 +282,15 @@ Marketplace installs from `tpapamichail/thomas-skills` clone GitHub's default
 branch (`main`). A tag on `develop` is not enough: the release must reach `main`
 before either plugin can be installed at its new version.
 
-After bumping the version in the root plugin manifest, both marketplace entries,
-both adapter plugin manifests, and `package.json`, run:
+Bump the version and synchronize the manifest copies, then run the checks:
 
 ```bash
+npm version <new> --no-git-tag-version
+npm run bump:manifests
+
 npm test
 npm run check:generated
+npm run check:version
 claude plugin validate . --strict
 claude plugin validate adapters/claude --strict
 
@@ -296,8 +302,13 @@ git push origin main develop
 git switch main
 claude plugin tag . --dry-run
 claude plugin tag . --push
+git tag -f v1
+git push -f origin v1
 git switch develop
 ```
+
+CI (`.github/workflows/ci.yml`) runs `npm test`, `npm run check:generated`, and
+`npm run check:version` on pushes to develop and main and on every pull request.
 
 `git flow release finish -n` deliberately leaves tagging to `claude plugin tag`,
 which uses the plugin name and version to create the marketplace release tag.

@@ -31,7 +31,9 @@
     "test": "node --test",
     "generate": "node scripts/generate-agent-adapters.mjs",
     "check:generated": "node scripts/generate-agent-adapters.mjs --check",
-    "configure:opencode": "node scripts/generate-agent-adapters.mjs --only opencode"
+    "check:version": "node scripts/check-version.mjs",
+    "configure:opencode": "node scripts/generate-agent-adapters.mjs --only opencode",
+    "bump:manifests": "node scripts/bump-version.mjs"
   },
   "pi": {
     "extensions": [
